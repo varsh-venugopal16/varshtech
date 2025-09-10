@@ -1,28 +1,390 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Stopwatch</title>
-    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" rel="stylesheet" crossorigin="anonymous">
-    <link href="stop.css" rel="stylesheet" type="text/css" />
+<meta charset="UTF-8">
+<title>Pirate Adventure Quiz</title>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=Pirata+One&display=swap" rel="stylesheet">
+<style>
+html, body {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  width: 100%;
+  font-family: 'Pirata One', cursive;
+  background: url('https://i.imgur.com/3i0bW0N.jpg') no-repeat center center fixed;
+  background-size: cover;
+  color: #f5f5dc;
+  overflow-x: hidden; /* prevent horizontal scroll */
+}
+
+body {
+  display: flex;
+  justify-content: center;
+  align-items: flex-start; /* allow vertical scrolling */
+  min-height: 100vh;
+}
+
+.container {
+  width: 100vw;
+  min-height: 100vh;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  box-sizing: border-box;
+  background: rgba(0,0,0,0.6); /* semi-transparent overlay */
+}
+
+.card {
+  background: rgba(20, 10, 0, 0.9);
+  border: 3px solid #b8860b;
+  border-radius: 20px;
+  padding: 25px;
+  margin-bottom: 20px;
+  width: 95vw;        /* almost full width */
+  max-width: 100%;    /* remove width limit */
+  box-shadow: 0 0 30px #222 inset, 0 0 20px #b8860b;
+  box-sizing: border-box;
+}
+
+.question {
+  font-size: 2em;
+  margin-bottom: 20px;
+  text-shadow: 1px 1px 5px #000;
+}
+
+.options button {
+  display: block;
+  width: 100%;
+  margin: 10px 0;
+  padding: 15px;
+  border: none;
+  border-radius: 12px;
+  background: linear-gradient(45deg, #333, #111);
+  color: #ffd700;
+  font-weight: bold;
+  cursor: pointer;
+  text-align: left;
+  box-shadow: 0 0 8px #000;
+  transition: all 0.3s ease;
+}
+
+.options button:hover {
+  background: linear-gradient(45deg, #555, #222);
+  transform: scale(1.05);
+  box-shadow: 0 0 15px #ffd700;
+}
+
+.nav-buttons {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 20px;
+  flex-wrap: wrap;
+}
+
+button.nav, #submitBtn, #restartBtn {
+  padding: 12px 25px;
+  border: none;
+  border-radius: 15px;
+  background: linear-gradient(45deg, #333, #111);
+  color: #ffd700;
+  font-weight: bold;
+  cursor: pointer;
+  box-shadow: 0 0 8px #000;
+  transition: all 0.3s ease;
+  margin: 5px 0;
+}
+
+button.nav:hover, #submitBtn:hover, #restartBtn:hover {
+  transform: scale(1.05);
+  box-shadow: 0 0 20px #ffd700;
+  background: linear-gradient(45deg, #555, #222);
+}
+
+#timer {
+  font-size: 1.8em;
+  font-weight: bold;
+  margin-bottom: 15px;
+  text-shadow: 1px 1px 5px #000;
+}
+
+#progress {
+  height: 25px;
+  background-color: #222;
+  border-radius: 15px;
+  overflow: hidden;
+  margin-bottom: 15px;
+}
+
+#progress-bar {
+  height: 100%;
+  background-color: #ffd700;
+  width: 0%;
+  transition: width 0.5s ease;
+}
+
+#resultCard {
+  display: none;
+  width: 95vw;        /* almost full width */
+  max-width: 100%;
+  padding: 25px;
+  box-sizing: border-box;
+}
+
+canvas {
+  max-width: 95vw;
+  margin: 25px auto;
+  display: block;
+  background: rgba(20,20,20,0.4);
+  border-radius: 15px;
+}
+
+.review {
+  margin-top: 25px;
+}
+
+.correct {
+  color: lightgreen;
+  font-weight: bold;
+}
+
+.wrong {
+  color: salmon;
+  font-weight: bold;
+}
+</style>
 </head>
 <body>
-    <!-- Colorful Stopwatch Header -->
-    <h1>Stopwatch</h1>
-
-    <!-- Stopwatch Display -->
-    <div id="MyClockDisplay">00:00:000</div>
-
-    <!-- Stopwatch Controls -->
-    <div id="buttonContainer" class="container text-center">
-        <button id="startStopButton" class="btn btn-outline-success mx-2">Start</button>
-        <button id="resetButton" class="btn btn-outline-danger mx-2">Reset</button>
+<div class="container">
+  <div id="quizCard" class="card">
+    <div id="timer">60:00</div>
+    <div id="progress"><div id="progress-bar"></div></div>
+    <div id="answeredCount">Answered: 0</div>
+    <div class="question" id="questionText"></div>
+    <div class="options" id="options"></div>
+    <div class="nav-buttons">
+      <button class="nav" id="prevBtn">⬅ Sail Back</button>
+      <button class="nav" id="nextBtn">Sail Ahead ➡</button>
+      <button id="submitBtn">Submit Quiz</button>
     </div>
-    <footer><p>&copy;varshtech. All rights reserved</p></footer>
-    <script src="stop.js"></script>
-    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" crossorigin="anonymous"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js" crossorigin="anonymous"></script>
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" crossorigin="anonymous"></script>
+  </div>
+
+  <div id="resultCard" class="card">
+    <h2>🏴‍☠️ Pirate Quiz Results</h2>
+    <p>Correct: <span id="correctNum"></span></p>
+    <p>Wrong: <span id="wrongNum"></span></p>
+    <canvas id="scoreChart"></canvas>
+    <div class="review" id="reviewList"></div>
+    <button id="restartBtn">Restart Voyage</button>
+  </div>
+</div>
+
+<script>
+const questions = [
+  { q: "Who was known as the 'King of Pirates'?", a: ["Blackbeard", "Bartholomew Roberts", "Henry Morgan", "Calico Jack"], correct: 1 },
+  { q: "What flag is most associated with pirates?", a: ["Union Jack", "Jolly Roger", "Skull & Bones", "Red Ensign"], correct: 1 },
+  { q: "What was Blackbeard's real name?", a: ["Edward Teach", "Henry Morgan", "John Rackham", "Charles Vane"], correct: 0 },
+  { q: "Which pirate was nicknamed 'Calico Jack'?", a: ["Jack Sparrow", "John Rackham", "Jack Hawkins", "Jack Morgan"], correct: 1 },
+  { q: "Who was the famous female pirate with Calico Jack?", a: ["Anne Bonny", "Mary Read", "Grace O’Malley", "Elizabeth Swann"], correct: 0 },
+  { q: "What was the name of Blackbeard's ship?", a: ["Queen Anne’s Revenge", "Royal Fortune", "Revenge", "Adventure Galley"], correct: 0 },
+  { q: "Where did pirates often base in the Caribbean?", a: ["Tortuga", "Cuba", "Jamaica", "Bahamas"], correct: 0 },
+  { q: "What term did pirates use for sharing loot?", a: ["Articles of Agreement", "Pieces of Eight", "Jolly Roger", "Prize Share"], correct: 0 },
+  { q: "What were Spanish treasure coins called?", a: ["Doubloons", "Guineas", "Pieces of Eight", "Crowns"], correct: 2 },
+  { q: "Which pirate was known for cruelty, even towards his crew?", a: ["Edward Low", "Blackbeard", "Henry Every", "Stede Bonnet"], correct: 0 },
+  { q: "Who wrote 'A General History of the Pyrates'?", a: ["Captain Charles Johnson", "Daniel Defoe", "Henry Morgan", "James Cook"], correct: 0 },
+  { q: "What pirate was called 'The Gentleman Pirate'?", a: ["Stede Bonnet", "Blackbeard", "Bartholomew Roberts", "Charles Vane"], correct: 0 },
+  { q: "What was Bartholomew Roberts also called?", a: ["Black Bart", "Red Roger", "Silver Bart", "Bloody Bart"], correct: 0 },
+  { q: "What Caribbean port was a pirate haven until 1671?", a: ["Port Royal", "Tortuga", "Nassau", "Havana"], correct: 0 },
+  { q: "Which pirate fought in the American Revolution?", a: ["Jean Lafitte", "Stede Bonnet", "Edward Low", "Henry Every"], correct: 0 },
+  { q: "What was Captain Kidd accused of?", a: ["Piracy", "Smuggling", "Murder", "Mutiny"], correct: 0 },
+  { q: "Who was Grace O’Malley?", a: ["Irish pirate queen", "Scottish admiral", "Spanish noble", "French corsair"], correct: 0 },
+  { q: "What ship did Captain Kidd command?", a: ["Adventure Galley", "Queen Anne’s Revenge", "Royal Fortune", "Whydah Gally"], correct: 0 },
+  { q: "What famous pirate ship sank in 1717?", a: ["Whydah Gally", "Adventure Galley", "Queen Anne’s Revenge", "Revenge"], correct: 0 },
+  { q: "What was a pirate’s drink of choice?", a: ["Rum", "Whiskey", "Wine", "Beer"], correct: 0 },
+  { q: "What did pirates often eat at sea?", a: ["Hardtack & salted meat", "Fresh bread", "Fruit & cheese", "Roast beef"], correct: 0 },
+  { q: "What was a pirate code of conduct called?", a: ["Articles", "Jolly Roger", "Charter", "Constitution"], correct: 0 },
+  { q: "What weapon did Blackbeard tie into his beard?", a: ["Slow match (fuses)", "Knives", "Gold rings", "Shells"], correct: 0 },
+  { q: "Who was the most successful pirate in terms of captured ships?", a: ["Bartholomew Roberts", "Blackbeard", "Captain Kidd", "Henry Morgan"], correct: 0 },
+  { q: "What did pirates call their hidden treasure?", a: ["Booty", "Gold stock", "Hoard", "Buried loot"], correct: 0 },
+  { q: "What did pirates often use as currency?", a: ["Pieces of Eight", "Copper coins", "Shells", "Beads"], correct: 0 },
+  { q: "What punishment did pirates fear most?", a: ["Hanging", "Keelhauling", "Walking the plank", "Whipping"], correct: 0 },
+  { q: "What was 'marooning'?", a: ["Abandoning someone on an island", "Making them row", "Whipping", "Throwing overboard"], correct: 0 },
+  { q: "Who captured Blackbeard in 1718?", a: ["Lt. Robert Maynard", "Henry Morgan", "Captain Kidd", "Stede Bonnet"], correct: 0 },
+  { q: "What pirate captain was executed in London in 1701?", a: ["Captain Kidd", "Blackbeard", "Bartholomew Roberts", "Stede Bonnet"], correct: 0 },
+  { q: "What did pirates use the term 'Avast' for?", a: ["Stop!", "Attack!", "Sail!", "Drink!"], correct: 0 },
+  { q: "What did pirates call a tavern?", a: ["Grog shop", "Alehouse", "Inn", "Port"], correct: 0 },
+  { q: "What sea was notorious for Barbary pirates?", a: ["Mediterranean", "Caribbean", "Atlantic", "Indian"], correct: 0 },
+  { q: "Who was known as the 'Scourge of the Spanish'?", a: ["Francis Drake", "Henry Morgan", "Blackbeard", "Edward Low"], correct: 0 },
+  { q: "What pirate is famous for the phrase 'Dead men tell no tales'?", a: ["Anonymous folklore", "Blackbeard", "Calico Jack", "Henry Every"], correct: 0 },
+  { q: "What pirate settled in Bath, North Carolina?", a: ["Blackbeard", "Stede Bonnet", "Charles Vane", "Bartholomew Roberts"], correct: 0 },
+  { q: "What pirate was known as 'The Arch Pirate'?", a: ["Henry Every", "Blackbeard", "Captain Kidd", "Edward Low"], correct: 0 },
+  { q: "What pirate had the ship 'Royal Fortune'?", a: ["Bartholomew Roberts", "Blackbeard", "Captain Kidd", "Calico Jack"], correct: 0 },
+  { q: "What pirate flew a flag with a skeleton holding an hourglass?", a: ["Blackbeard", "Bartholomew Roberts", "Edward Low", "Stede Bonnet"], correct: 0 },
+  { q: "What pirate was nicknamed 'Long Ben'?", a: ["Henry Every", "Blackbeard", "John Ward", "Captain Kidd"], correct: 0 },
+  { q: "What pirate was a former privateer for England?", a: ["Henry Morgan", "Blackbeard", "Calico Jack", "Edward Low"], correct: 0 },
+  { q: "What was the Whydah Gally originally?", a: ["Slave ship", "Warship", "Merchant vessel", "Treasure galleon"], correct: 0 },
+  { q: "Who discovered the wreck of the Whydah Gally?", a: ["Barry Clifford", "Robert Ballard", "Jacques Cousteau", "James Cameron"], correct: 0 },
+  { q: "What did pirates call rum mixed with water?", a: ["Grog", "Ale", "Punch", "Flip"], correct: 0 },
+  { q: "What pirate was active in the Indian Ocean?", a: ["Henry Every", "Bartholomew Roberts", "Edward Low", "Calico Jack"], correct: 0 },
+  { q: "Which pirate was killed in battle near Cape Lopez in 1722?", a: ["Bartholomew Roberts", "Blackbeard", "Stede Bonnet", "Henry Every"], correct: 0 },
+  { q: "What pirate flag showed a bleeding heart?", a: ["Bartholomew Roberts", "Blackbeard", "Calico Jack", "Stede Bonnet"], correct: 0 },
+  { q: "What pirate was known for having women in his crew?", a: ["Calico Jack", "Blackbeard", "Henry Morgan", "Edward Low"], correct: 0 },
+  { q: "Who was Mary Read?", a: ["Female pirate", "Governor", "Sailor’s wife", "Shipwright"], correct: 0 },
+  { q: "What was the punishment for piracy?", a: ["Hanging", "Imprisonment", "Whipping", "Exile"], correct: 0 },
+  { q: "Where were many pirates executed?", a: ["Execution Dock, London", "Tower of London", "Tyburn", "Port Royal"], correct: 0 },
+  { q: "What pirate had the nickname 'Black Sam'?", a: ["Samuel Bellamy", "Henry Morgan", "Edward Low", "Stede Bonnet"], correct: 0 },
+  { q: "What treasure did pirates love most?", a: ["Gold & silver", "Spices", "Food", "Weapons"], correct: 0 },
+  { q: "What pirate was also a former plantation owner?", a: ["Stede Bonnet", "Blackbeard", "Henry Morgan", "Captain Kidd"], correct: 0 },
+  { q: "What Caribbean island was famous for pirate havens?", a: ["Tortuga", "Barbados", "Cuba", "Hispaniola"], correct: 0 },
+  { q: "What pirate was active off Madagascar?", a: ["Henry Every", "William Kidd", "Bartholomew Roberts", "Charles Vane"], correct: 0 },
+  { q: "What was the main pirate weapon?", a: ["Cutlass", "Musket", "Cannon", "Dagger"], correct: 0 },
+  { q: "What was a blunderbuss?", a: ["Gun", "Sword", "Ship", "Treasure chest"], correct: 0 },
+  { q: "What did pirates call fresh water?", a: ["Sweet water", "Clear water", "Rainwater", "Pure water"], correct: 0 },
+  { q: "What was the 'Golden Age of Piracy' years?", a: ["1650–1730", "1600–1650", "1730–1800", "1800–1850"], correct: 0 },
+  { q: "Who was the last famous pirate of the Golden Age?", a: ["Bartholomew Roberts", "Blackbeard", "Calico Jack", "Captain Kidd"], correct: 0 },
+  { q: "What pirate was nicknamed 'The Dread Pirate'?", a: ["Emanuel Wynn", "Henry Morgan", "Bartholomew Roberts", "Edward Low"], correct: 0 },
+  { q: "What was the main pirate target at sea?", a: ["Spanish treasure ships", "Fishing boats", "Warships", "Colonial ferries"], correct: 0 },
+  { q: "What pirate flag had crossed swords?", a: ["Calico Jack", "Blackbeard", "Stede Bonnet", "Henry Morgan"], correct: 0 },
+  { q: "What pirate once blockaded Charleston?", a: ["Blackbeard", "Calico Jack", "Henry Morgan", "Bartholomew Roberts"], correct: 0 },
+  { q: "What pirate had a base in Nassau?", a: ["Charles Vane", "Stede Bonnet", "Blackbeard", "Calico Jack"], correct: 0 },
+  { q: "Who was Howell Davis?", a: ["Welsh pirate", "English admiral", "Spanish privateer", "French captain"], correct: 0 },
+  { q: "What pirate used the ship 'Revenge'?", a: ["Stede Bonnet", "Blackbeard", "Captain Kidd", "Calico Jack"], correct: 0 },
+  { q: "What pirate was called the 'Corsair of the Gulf'?", a: ["Jean Lafitte", "Henry Morgan", "Edward Low", "Black Sam Bellamy"], correct: 0 },
+  { q: "What pirate’s treasure is still rumored buried?", a: ["Captain Kidd", "Blackbeard", "Calico Jack", "Bartholomew Roberts"], correct: 0 },
+  { q: "What pirate drank gunpowder mixed with rum?", a: ["Blackbeard", "Captain Kidd", "Charles Vane", "Henry Every"], correct: 0 },
+  { q: "What pirate’s trial was famous in 1720?", a: ["Anne Bonny & Mary Read", "Blackbeard", "Bartholomew Roberts", "Captain Kidd"], correct: 0 },
+  { q: "What pirate was known for mercy to prisoners?", a: ["Bartholomew Roberts", "Blackbeard", "Edward Low", "Charles Vane"], correct: 0 },
+  { q: "What pirate ruled over Nassau’s Republic of Pirates?", a: ["Benjamin Hornigold", "Henry Morgan", "Calico Jack", "Stede Bonnet"], correct: 0 },
+  { q: "What pirate had the motto 'A merry life and a short one'?", a: ["Bartholomew Roberts", "Blackbeard", "Captain Kidd", "Henry Every"], correct: 0 },
+  { q: "Who was the pirate known as 'Redbeard'?", a: ["Barbarossa", "Blackbeard", "Captain Kidd", "Henry Morgan"], correct: 0 },
+  { q: "What did pirates call cannonballs with chains?", a: ["Chain shot", "Round shot", "Grapeshot", "Cross shot"], correct: 0 },
+  { q: "What pirate shipwreck was found near Cape Cod?", a: ["Whydah Gally", "Queen Anne’s Revenge", "Adventure Galley", "Royal Fortune"], correct: 0 },
+  { q: "What pirate was betrayed and captured in 1720?", a: ["Calico Jack", "Blackbeard", "Henry Morgan", "Bartholomew Roberts"], correct: 0 },
+  { q: "What pirate was active in the Red Sea?", a: ["Henry Every", "Blackbeard", "Calico Jack", "William Kidd"], correct: 0 },
+  { q: "Who was Thomas Tew?", a: ["Pirate of Red Sea/Indian Ocean", "Spanish governor", "Irish corsair", "Scottish admiral"], correct: 0 },
+  { q: "What pirate was also a governor of Nassau?", a: ["Woodes Rogers", "Henry Morgan", "Blackbeard", "William Kidd"], correct: 0 },
+  { q: "What was a common pirate battle tactic?", a: ["Boarding ships", "Cannon duel only", "Ramming", "Ignoring enemies"], correct: 0 },
+  { q: "What did pirates use to navigate?", a: ["Compass and charts", "Stars only", "Maps only", "Guesswork"], correct: 0 },
+  { q: "What pirate was known as 'The Exquemelin chronicler'?", a: ["Alexandre Exquemelin", "Henry Every", "Blackbeard", "Bartholomew Roberts"], correct: 0 },
+  { q: "What pirate did the French call 'Jambe de Bois' (Wooden Leg)?", a: ["François le Clerc", "Blackbeard", "Henry Morgan", "William Kidd"], correct: 0 },
+  { q: "What pirate was called 'El Draque' by the Spanish?", a: ["Francis Drake", "Henry Morgan", "Blackbeard", "Bartholomew Roberts"], correct: 0 },
+  { q: "Who was Jean Lafitte?", a: ["French pirate in Gulf of Mexico", "Spanish admiral", "Irish corsair", "Dutch trader"], correct: 0 },
+  { q: "What pirate helped in the Battle of New Orleans?", a: ["Jean Lafitte", "Blackbeard", "Henry Morgan", "William Kidd"], correct: 0 },
+  { q: "What pirate captain’s base was on Madagascar?", a: ["Adam Baldridge", "Henry Morgan", "Bartholomew Roberts", "Edward Low"], correct: 0 },
+  { q: "What was 'careening'?", a: ["Beach ship for cleaning hull", "Repair sails", "Sharpen swords", "Hide treasure"], correct: 0 },
+  { q: "What was a pirate’s main goal?", a: ["Plunder and wealth", "Exploration", "Naval glory", "Colonization"], correct: 0 },
+  { q: "What pirate was famous for the phrase 'Hoist the Colors'?", a: ["Fictionalized in folklore", "Blackbeard", "Henry Morgan", "Calico Jack"], correct: 0 },
+  { q: "What pirate died at Ocracoke Island?", a: ["Blackbeard", "Captain Kidd", "Henry Every", "Bartholomew Roberts"], correct: 0 },
+  { q: "What pirate’s ship was Queen Anne’s Revenge before capture?", a: ["La Concorde", "Royal Fortune", "Whydah", "Revenge"], correct: 0 },
+  { q: "What pirate was known as 'The Navigator Pirate'?", a: ["William Dampier", "Henry Morgan", "Captain Kidd", "Charles Vane"], correct: 0 },
+  { q: "What pirate’s treasure is said to be on Gardiners Island?", a: ["Captain Kidd", "Blackbeard", "Jean Lafitte", "Francis Drake"], correct: 0 },
+  { q: "What pirate terrorized Jamaica in the 17th century?", a: ["Henry Morgan", "Blackbeard", "Stede Bonnet", "Edward Low"], correct: 0 },
+  { q: "What pirate had the ship named Adventure Prize?", a: ["Thomas Tew", "Blackbeard", "Captain Kidd", "Henry Every"], correct: 0 },
+  { q: "What pirate captured the Mughal ship Ganj-i-Sawai?", a: ["Henry Every", "Blackbeard", "Captain Kidd", "Bartholomew Roberts"], correct: 0 },
+  { q: "What pirate was also known as 'Black Caesar'?", a: ["African pirate with Blackbeard", "French corsair", "Spanish privateer", "Irish rebel"], correct: 0 }
+];
+
+// Shuffle function
+function shuffle(array) {
+  for (let i = array.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [array[i], array[j]] = [array[j], array[i]];
+  }
+}
+shuffle(questions);
+
+let current = 0;
+let answers = Array(questions.length).fill(null);
+let timer = 60 * 60; // 1 hour
+let timerInterval;
+
+const qText = document.getElementById("questionText");
+const optionsDiv = document.getElementById("options");
+const prevBtn = document.getElementById("prevBtn");
+const nextBtn = document.getElementById("nextBtn");
+const submitBtn = document.getElementById("submitBtn");
+const restartBtn = document.getElementById("restartBtn");
+
+function startTimer() {
+  timerInterval = setInterval(() => {
+    let mins = Math.floor(timer / 60);
+    let secs = timer % 60;
+    document.getElementById("timer").textContent = `${String(mins).padStart(2,"0")}:${String(secs).padStart(2,"0")}`;
+    timer--;
+    if (timer < 0) { clearInterval(timerInterval); showResults(); }
+  }, 1000);
+}
+
+function showQuestion(index) {
+  let q = questions[index];
+  let optionIndices = q.a.map((_, i) => i);
+  shuffle(optionIndices);
+
+  qText.textContent = q.q;
+  optionsDiv.innerHTML = "";
+  optionIndices.forEach(i => {
+    let btn = document.createElement("button");
+    btn.textContent = q.a[i];
+    if (answers[index] === i) btn.style.backgroundColor = "#ffda55";
+    btn.onclick = () => { answers[index] = i; updateProgress(); showQuestion(index); };
+    optionsDiv.appendChild(btn);
+  });
+
+  document.getElementById("answeredCount").textContent = "Answered: " + answers.filter(a => a !== null).length;
+  prevBtn.disabled = (index === 0);
+  nextBtn.disabled = (index === questions.length - 1);
+}
+
+function updateProgress() {
+  let answered = answers.filter(a => a !== null).length;
+  let percent = (answered / questions.length) * 100;
+  document.getElementById("progress-bar").style.width = percent + "%";
+}
+
+function showResults() {
+  clearInterval(timerInterval);
+  document.getElementById("quizCard").style.display = "none";
+  document.getElementById("resultCard").style.display = "block";
+  let correct = 0;
+  let wrong = 0;
+  questions.forEach((q, i) => {
+    if (answers[i] === q.correct) correct++;
+    else if (answers[i] !== null) wrong++;
+  });
+  document.getElementById("correctNum").textContent = correct;
+  document.getElementById("wrongNum").textContent = wrong;
+
+  new Chart(document.getElementById("scoreChart"), {
+    type: "pie",
+    data: {
+      labels: ["Correct", "Wrong"],
+      datasets: [{ data: [correct, wrong], backgroundColor: ["#ffd700","#8b0000"] }]
+    }
+  });
+
+  let review = document.getElementById("reviewList");
+  review.innerHTML = "";
+  questions.forEach((q, i) => {
+    let p = document.createElement("p");
+    if (answers[i] === q.correct) {
+      p.innerHTML = `<span class='correct'>✔ ${q.q} - ${q.a[q.correct]}</span>`;
+    } else if (answers[i] !== null) {
+      p.innerHTML = `<span class='wrong'>✘ ${q.q} - Your answer: ${q.a[answers[i]]}, Correct: ${q.a[q.correct]}</span>`;
+    } else {
+      p.innerHTML = `<span class='wrong'>✘ ${q.q} - Unanswered, Correct: ${q.a[q.correct]}</span>`;
+    }
+    review.appendChild(p);
+  });
+}
+
+prevBtn.onclick = () => { if (current > 0) { current--; showQuestion(current); } };
+nextBtn.onclick = () => { if (current < questions.length - 1) { current++; showQuestion(current); } };
+submitBtn.onclick = () => { showResults(); };
+restartBtn.onclick = () => { location.reload(); };
+
+showQuestion(current);
+startTimer();
+</script>
 </body>
 </html>

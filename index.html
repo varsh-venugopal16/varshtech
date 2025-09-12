@@ -36,6 +36,25 @@ body {
   background: rgba(0,0,0,0.6); /* semi-transparent overlay */
 }
 
+.logo-container {
+  width: 150px;
+  height: 150px;
+  margin-bottom: 20px;
+  animation: float 3s ease-in-out infinite;
+}
+
+.logo-container img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  filter: drop-shadow(0 0 20px #b8860b);
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-10px); }
+}
+
 .card {
   background: rgba(20, 10, 0, 0.9);
   border: 3px solid #b8860b;
@@ -157,6 +176,9 @@ canvas {
 </head>
 <body>
 <div class="container">
+  <div class="logo-container">
+    <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 200'%3E%3Ccircle cx='100' cy='100' r='95' fill='none' stroke='%23b8860b' stroke-width='3'/%3E%3Ccircle cx='100' cy='100' r='85' fill='%23222'/%3E%3Cg fill='%23b8860b'%3E%3Cpath d='M100 40 L110 60 L90 60 Z'/%3E%3Ccircle cx='100' cy='90' r='35'/%3E%3Ccircle cx='85' cy='85' r='10' fill='%23222'/%3E%3Ccircle cx='115' cy='85' r='10' fill='%23222'/%3E%3Cpath d='M100 100 L105 110 L95 110 Z' fill='%23222'/%3E%3Cpath d='M80 110 Q100 125 120 110' fill='none' stroke='%23222' stroke-width='3'/%3E%3Cpath d='M60 130 L140 130' stroke='%23b8860b' stroke-width='2'/%3E%3Cpath d='M70 140 L130 140' stroke='%23b8860b' stroke-width='2'/%3E%3Cpath d='M50 150 L60 170 M150 150 L140 170' stroke='%23b8860b' stroke-width='3'/%3E%3C/g%3E%3C/svg%3E" alt="Pirate Logo">
+  </div>
   <div id="quizCard" class="card">
     <div id="timer">60:00</div>
     <div id="progress"><div id="progress-bar"></div></div>
@@ -186,8 +208,8 @@ const questions = [
   { q: "What flag is most associated with pirates?", a: ["Union Jack", "Jolly Roger", "Skull & Bones", "Red Ensign"], correct: 1 },
   { q: "What was Blackbeard's real name?", a: ["Edward Teach", "Henry Morgan", "John Rackham", "Charles Vane"], correct: 0 },
   { q: "Which pirate was nicknamed 'Calico Jack'?", a: ["Jack Sparrow", "John Rackham", "Jack Hawkins", "Jack Morgan"], correct: 1 },
-  { q: "Who was the famous female pirate with Calico Jack?", a: ["Anne Bonny", "Mary Read", "Grace O’Malley", "Elizabeth Swann"], correct: 0 },
-  { q: "What was the name of Blackbeard's ship?", a: ["Queen Anne’s Revenge", "Royal Fortune", "Revenge", "Adventure Galley"], correct: 0 },
+  { q: "Who was the famous female pirate with Calico Jack?", a: ["Anne Bonny", "Mary Read", "Grace O'Malley", "Elizabeth Swann"], correct: 0 },
+  { q: "What was the name of Blackbeard's ship?", a: ["Queen Anne's Revenge", "Royal Fortune", "Revenge", "Adventure Galley"], correct: 0 },
   { q: "Where did pirates often base in the Caribbean?", a: ["Tortuga", "Cuba", "Jamaica", "Bahamas"], correct: 0 },
   { q: "What term did pirates use for sharing loot?", a: ["Articles of Agreement", "Pieces of Eight", "Jolly Roger", "Prize Share"], correct: 0 },
   { q: "What were Spanish treasure coins called?", a: ["Doubloons", "Guineas", "Pieces of Eight", "Crowns"], correct: 2 },
@@ -198,10 +220,10 @@ const questions = [
   { q: "What Caribbean port was a pirate haven until 1671?", a: ["Port Royal", "Tortuga", "Nassau", "Havana"], correct: 0 },
   { q: "Which pirate fought in the American Revolution?", a: ["Jean Lafitte", "Stede Bonnet", "Edward Low", "Henry Every"], correct: 0 },
   { q: "What was Captain Kidd accused of?", a: ["Piracy", "Smuggling", "Murder", "Mutiny"], correct: 0 },
-  { q: "Who was Grace O’Malley?", a: ["Irish pirate queen", "Scottish admiral", "Spanish noble", "French corsair"], correct: 0 },
-  { q: "What ship did Captain Kidd command?", a: ["Adventure Galley", "Queen Anne’s Revenge", "Royal Fortune", "Whydah Gally"], correct: 0 },
-  { q: "What famous pirate ship sank in 1717?", a: ["Whydah Gally", "Adventure Galley", "Queen Anne’s Revenge", "Revenge"], correct: 0 },
-  { q: "What was a pirate’s drink of choice?", a: ["Rum", "Whiskey", "Wine", "Beer"], correct: 0 },
+  { q: "Who was Grace O'Malley?", a: ["Irish pirate queen", "Scottish admiral", "Spanish noble", "French corsair"], correct: 0 },
+  { q: "What ship did Captain Kidd command?", a: ["Adventure Galley", "Queen Anne's Revenge", "Royal Fortune", "Whydah Gally"], correct: 0 },
+  { q: "What famous pirate ship sank in 1717?", a: ["Whydah Gally", "Adventure Galley", "Queen Anne's Revenge", "Revenge"], correct: 0 },
+  { q: "What was a pirate's drink of choice?", a: ["Rum", "Whiskey", "Wine", "Beer"], correct: 0 },
   { q: "What did pirates often eat at sea?", a: ["Hardtack & salted meat", "Fresh bread", "Fruit & cheese", "Roast beef"], correct: 0 },
   { q: "What was a pirate code of conduct called?", a: ["Articles", "Jolly Roger", "Charter", "Constitution"], correct: 0 },
   { q: "What weapon did Blackbeard tie into his beard?", a: ["Slow match (fuses)", "Knives", "Gold rings", "Shells"], correct: 0 },
@@ -230,7 +252,7 @@ const questions = [
   { q: "Which pirate was killed in battle near Cape Lopez in 1722?", a: ["Bartholomew Roberts", "Blackbeard", "Stede Bonnet", "Henry Every"], correct: 0 },
   { q: "What pirate flag showed a bleeding heart?", a: ["Bartholomew Roberts", "Blackbeard", "Calico Jack", "Stede Bonnet"], correct: 0 },
   { q: "What pirate was known for having women in his crew?", a: ["Calico Jack", "Blackbeard", "Henry Morgan", "Edward Low"], correct: 0 },
-  { q: "Who was Mary Read?", a: ["Female pirate", "Governor", "Sailor’s wife", "Shipwright"], correct: 0 },
+  { q: "Who was Mary Read?", a: ["Female pirate", "Governor", "Sailor's wife", "Shipwright"], correct: 0 },
   { q: "What was the punishment for piracy?", a: ["Hanging", "Imprisonment", "Whipping", "Exile"], correct: 0 },
   { q: "Where were many pirates executed?", a: ["Execution Dock, London", "Tower of London", "Tyburn", "Port Royal"], correct: 0 },
   { q: "What pirate had the nickname 'Black Sam'?", a: ["Samuel Bellamy", "Henry Morgan", "Edward Low", "Stede Bonnet"], correct: 0 },
@@ -251,15 +273,15 @@ const questions = [
   { q: "Who was Howell Davis?", a: ["Welsh pirate", "English admiral", "Spanish privateer", "French captain"], correct: 0 },
   { q: "What pirate used the ship 'Revenge'?", a: ["Stede Bonnet", "Blackbeard", "Captain Kidd", "Calico Jack"], correct: 0 },
   { q: "What pirate was called the 'Corsair of the Gulf'?", a: ["Jean Lafitte", "Henry Morgan", "Edward Low", "Black Sam Bellamy"], correct: 0 },
-  { q: "What pirate’s treasure is still rumored buried?", a: ["Captain Kidd", "Blackbeard", "Calico Jack", "Bartholomew Roberts"], correct: 0 },
+  { q: "What pirate's treasure is still rumored buried?", a: ["Captain Kidd", "Blackbeard", "Calico Jack", "Bartholomew Roberts"], correct: 0 },
   { q: "What pirate drank gunpowder mixed with rum?", a: ["Blackbeard", "Captain Kidd", "Charles Vane", "Henry Every"], correct: 0 },
-  { q: "What pirate’s trial was famous in 1720?", a: ["Anne Bonny & Mary Read", "Blackbeard", "Bartholomew Roberts", "Captain Kidd"], correct: 0 },
+  { q: "What pirate's trial was famous in 1720?", a: ["Anne Bonny & Mary Read", "Blackbeard", "Bartholomew Roberts", "Captain Kidd"], correct: 0 },
   { q: "What pirate was known for mercy to prisoners?", a: ["Bartholomew Roberts", "Blackbeard", "Edward Low", "Charles Vane"], correct: 0 },
-  { q: "What pirate ruled over Nassau’s Republic of Pirates?", a: ["Benjamin Hornigold", "Henry Morgan", "Calico Jack", "Stede Bonnet"], correct: 0 },
+  { q: "What pirate ruled over Nassau's Republic of Pirates?", a: ["Benjamin Hornigold", "Henry Morgan", "Calico Jack", "Stede Bonnet"], correct: 0 },
   { q: "What pirate had the motto 'A merry life and a short one'?", a: ["Bartholomew Roberts", "Blackbeard", "Captain Kidd", "Henry Every"], correct: 0 },
   { q: "Who was the pirate known as 'Redbeard'?", a: ["Barbarossa", "Blackbeard", "Captain Kidd", "Henry Morgan"], correct: 0 },
   { q: "What did pirates call cannonballs with chains?", a: ["Chain shot", "Round shot", "Grapeshot", "Cross shot"], correct: 0 },
-  { q: "What pirate shipwreck was found near Cape Cod?", a: ["Whydah Gally", "Queen Anne’s Revenge", "Adventure Galley", "Royal Fortune"], correct: 0 },
+  { q: "What pirate shipwreck was found near Cape Cod?", a: ["Whydah Gally", "Queen Anne's Revenge", "Adventure Galley", "Royal Fortune"], correct: 0 },
   { q: "What pirate was betrayed and captured in 1720?", a: ["Calico Jack", "Blackbeard", "Henry Morgan", "Bartholomew Roberts"], correct: 0 },
   { q: "What pirate was active in the Red Sea?", a: ["Henry Every", "Blackbeard", "Calico Jack", "William Kidd"], correct: 0 },
   { q: "Who was Thomas Tew?", a: ["Pirate of Red Sea/Indian Ocean", "Spanish governor", "Irish corsair", "Scottish admiral"], correct: 0 },
@@ -271,14 +293,14 @@ const questions = [
   { q: "What pirate was called 'El Draque' by the Spanish?", a: ["Francis Drake", "Henry Morgan", "Blackbeard", "Bartholomew Roberts"], correct: 0 },
   { q: "Who was Jean Lafitte?", a: ["French pirate in Gulf of Mexico", "Spanish admiral", "Irish corsair", "Dutch trader"], correct: 0 },
   { q: "What pirate helped in the Battle of New Orleans?", a: ["Jean Lafitte", "Blackbeard", "Henry Morgan", "William Kidd"], correct: 0 },
-  { q: "What pirate captain’s base was on Madagascar?", a: ["Adam Baldridge", "Henry Morgan", "Bartholomew Roberts", "Edward Low"], correct: 0 },
+  { q: "What pirate captain's base was on Madagascar?", a: ["Adam Baldridge", "Henry Morgan", "Bartholomew Roberts", "Edward Low"], correct: 0 },
   { q: "What was 'careening'?", a: ["Beach ship for cleaning hull", "Repair sails", "Sharpen swords", "Hide treasure"], correct: 0 },
-  { q: "What was a pirate’s main goal?", a: ["Plunder and wealth", "Exploration", "Naval glory", "Colonization"], correct: 0 },
+  { q: "What was a pirate's main goal?", a: ["Plunder and wealth", "Exploration", "Naval glory", "Colonization"], correct: 0 },
   { q: "What pirate was famous for the phrase 'Hoist the Colors'?", a: ["Fictionalized in folklore", "Blackbeard", "Henry Morgan", "Calico Jack"], correct: 0 },
   { q: "What pirate died at Ocracoke Island?", a: ["Blackbeard", "Captain Kidd", "Henry Every", "Bartholomew Roberts"], correct: 0 },
-  { q: "What pirate’s ship was Queen Anne’s Revenge before capture?", a: ["La Concorde", "Royal Fortune", "Whydah", "Revenge"], correct: 0 },
+  { q: "What pirate's ship was Queen Anne's Revenge before capture?", a: ["La Concorde", "Royal Fortune", "Whydah", "Revenge"], correct: 0 },
   { q: "What pirate was known as 'The Navigator Pirate'?", a: ["William Dampier", "Henry Morgan", "Captain Kidd", "Charles Vane"], correct: 0 },
-  { q: "What pirate’s treasure is said to be on Gardiners Island?", a: ["Captain Kidd", "Blackbeard", "Jean Lafitte", "Francis Drake"], correct: 0 },
+  { q: "What pirate's treasure is said to be on Gardiners Island?", a: ["Captain Kidd", "Blackbeard", "Jean Lafitte", "Francis Drake"], correct: 0 },
   { q: "What pirate terrorized Jamaica in the 17th century?", a: ["Henry Morgan", "Blackbeard", "Stede Bonnet", "Edward Low"], correct: 0 },
   { q: "What pirate had the ship named Adventure Prize?", a: ["Thomas Tew", "Blackbeard", "Captain Kidd", "Henry Every"], correct: 0 },
   { q: "What pirate captured the Mughal ship Ganj-i-Sawai?", a: ["Henry Every", "Blackbeard", "Captain Kidd", "Bartholomew Roberts"], correct: 0 },
@@ -381,7 +403,7 @@ function showResults() {
 prevBtn.onclick = () => { if (current > 0) { current--; showQuestion(current); } };
 nextBtn.onclick = () => { if (current < questions.length - 1) { current++; showQuestion(current); } };
 submitBtn.onclick = () => { showResults(); };
-restartBtn.onclick = () => { location.reload(); };
+restartBtn
 
 showQuestion(current);
 startTimer();
